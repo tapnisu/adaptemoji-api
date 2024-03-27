@@ -3,8 +3,8 @@ use anyhow::Result;
 use axum::{
     body::{Body, Bytes},
     extract::{Multipart, Query},
-    http::StatusCode,
-    response::{IntoResponse, Response},
+    http::{header, StatusCode},
+    response::{AppendHeaders, IntoResponse, Response},
 };
 use image::{io::Reader as ImageReader, GrayAlphaImage, ImageFormat};
 use serde::Deserialize;
@@ -64,8 +64,9 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Re
             .into_response();
     }
 
+    let headers = AppendHeaders([(header::CONTENT_TYPE, "image/png")]);
     let body = Body::from(cursor.into_inner());
-    (StatusCode::OK, body).into_response()
+    (StatusCode::OK, headers, body).into_response()
 }
 
 pub fn convert_image(bytes: &Bytes, query: &Query<ConvertQuery>) -> Result<GrayAlphaImage> {
