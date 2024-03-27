@@ -16,7 +16,7 @@ pub struct ConvertQuery {
     resize: bool,
 }
 
-pub async fn convert(query: &Query<ConvertQuery>, mut multipart: Multipart) -> Response {
+pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Response {
     let option_field = match multipart.next_field().await {
         Ok(option_field) => option_field,
         Err(e) => {
@@ -27,7 +27,7 @@ pub async fn convert(query: &Query<ConvertQuery>, mut multipart: Multipart) -> R
     let field = match option_field {
         Some(field) => field,
         None => {
-            return (StatusCode::BAD_REQUEST, format!("Empty multipart")).into_response();
+            return (StatusCode::BAD_REQUEST, "Empty multipart".to_string()).into_response();
         }
     };
 
@@ -42,7 +42,7 @@ pub async fn convert(query: &Query<ConvertQuery>, mut multipart: Multipart) -> R
         }
     };
 
-    let img = match convert_image(&bytes, query) {
+    let img = match convert_image(&bytes, &query) {
         Ok(img) => img,
         Err(e) => {
             return (
@@ -55,9 +55,16 @@ pub async fn convert(query: &Query<ConvertQuery>, mut multipart: Multipart) -> R
 
     // TODO: Check if it is the best way to do it
     let mut cursor = Cursor::new(Vec::new());
-    img.write_to(&mut cursor, ImageFormat::Png);
-    let body = Body::from(cursor.into_inner());
 
+    if let Err(e) = img.write_to(&mut cursor, ImageFormat::Png) {
+        return (
+            StatusCode::BAD_REQUEST,
+            format!("Image conversion error: {}", e),
+        )
+            .into_response();
+    }
+
+    let body = Body::from(cursor.into_inner());
     (StatusCode::OK, body).into_response()
 }
 
