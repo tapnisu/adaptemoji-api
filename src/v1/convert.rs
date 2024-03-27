@@ -12,8 +12,8 @@ use std::io::Cursor;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct ConvertQuery {
-    negative: bool,
-    resize: bool,
+    negative: Option<bool>,
+    resize: Option<bool>,
 }
 
 pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Response {
@@ -73,13 +73,13 @@ pub fn convert_image(bytes: &Bytes, query: &Query<ConvertQuery>) -> Result<GrayA
         .with_guessed_format()?
         .decode()?;
 
-    let adaptive_image = if query.resize {
+    let adaptive_image = if query.resize.unwrap_or_default() {
         img.resize(100, 100, image::imageops::FilterType::Triangle)
     } else {
         img
     }
     .to_luma_alpha8()
-    .convert_adaptive(query.negative);
+    .convert_adaptive(query.negative.unwrap_or_default());
 
     Ok(adaptive_image)
 }
