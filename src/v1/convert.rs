@@ -53,7 +53,6 @@ pub async fn convert(query: Query<ConvertQuery>, mut multipart: Multipart) -> Re
         }
     };
 
-    // TODO: Check if it is the best way to do it
     let mut cursor = Cursor::new(Vec::new());
 
     if let Err(e) = img.write_to(&mut cursor, ImageFormat::Png) {
