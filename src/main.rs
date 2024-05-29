@@ -29,7 +29,7 @@ async fn main() {
     let shutdown_future = shutdown_signal(handle.clone());
 
     let port = env::var("PORT").map_or(3000, |port| port.parse().unwrap());
-    let addr = SocketAddr::from(([127, 0, 0, 1], port));
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     tracing::debug!("listening on {}", listener.local_addr().unwrap());
