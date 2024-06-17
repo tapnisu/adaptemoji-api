@@ -1,4 +1,5 @@
 FROM rust:1.77 as builder
+LABEL authors="tapnisu"
 
 WORKDIR /usr/src/adaptemoji-api
 COPY . .

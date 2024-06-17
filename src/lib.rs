@@ -14,7 +14,7 @@ pub fn create_routes() -> Router {
     Router::new()
         .route(
             "/",
-            get(|| async { Redirect::permanent("https://github.com/adaptemoji/adaptemoji-api") }),
+            get(|| async { Redirect::permanent("https://github.com/tapnisu/adaptemoji-api") }),
         )
         .nest("/", v1.to_owned())
         .nest("/v1", v1)

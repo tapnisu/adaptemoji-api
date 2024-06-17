@@ -3,6 +3,9 @@ name = "adaptemoji-api"
 version = "0.1.2"
 edition = "2021"
 
+# Don't forget to update `.github/workflows/test.yml`
+rust-version = "1.74"
+
 [dependencies]
 adaptemoji = { version = "0.1", default-features = false }
 anyhow = "1.0"
