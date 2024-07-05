@@ -1,15 +1,23 @@
-FROM rust:1.77 as builder
+FROM rust:1.79-alpine3.20 as builder
 LABEL authors="tapnisu"
 
 WORKDIR /usr/src/adaptemoji-api
+
+RUN apk update \
+    && apk upgrade --available \
+    && apk add --no-cache alpine-sdk
+
 COPY . .
 RUN cargo build --release
 
-FROM debian:bookworm-slim
+FROM alpine:3.20 as runner
 
-# RUN apt-get update && apt-get install -y extra-runtime-dependencies && rm -rf /var/lib/apt/lists/*
+RUN apk update \
+    && apk upgrade --available
+
 COPY --from=builder /usr/src/adaptemoji-api/target/release/adaptemoji-api /usr/local/bin/adaptemoji-api
 
 CMD ["adaptemoji-api"]
 
+ENV PORT=3000
 EXPOSE 3000
