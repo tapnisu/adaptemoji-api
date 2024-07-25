@@ -6,7 +6,7 @@ use axum::{
     http::{header, StatusCode},
     response::{AppendHeaders, IntoResponse, Response},
 };
-use image::{io::Reader as ImageReader, GrayAlphaImage, ImageFormat};
+use image::{ImageReader, GrayAlphaImage, ImageFormat};
 use serde::Deserialize;
 use std::io::Cursor;
 
